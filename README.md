@@ -1,11 +1,13 @@
 # jcablib
-This is a fork of the cablib project on SF (https://sourceforge.net/projects/cablib/)
+This is a fork of the cablib project on SF (https://sourceforge.net/projects/cablib/).
+Forked at 2016-Oct-22 (SF svn commit version r9).
 
-I've upgraded it to Java 8 and fixed a lot of use of deprected methods. 
-Also added dependency management and some patches that were submitted but 
-not accepted into the SF project. 
+### Changes since since the SF version
+- I've upgraded it to Java 8 and fixed a lot of use of deprected methods.
+- Added dependency management (maven) but kept the original ant based build.
+- Applied some patches that were submitted but not accepted into the SF project.
 
-The following is the original README:
+## The following is the original README.txt:
 
 ********************************* jcablib 0.1 **********************************
 

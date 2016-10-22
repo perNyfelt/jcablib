@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:artifact="antlib:org.apache.maven.artifact.ant" name="jcablib" default="jar" basedir=".">
+   <property name="jcablib.version" value="0.1.1"/>
+   <property name="src" location="src/main/java"/>
+   <property name="src.resources" location="src/main/resources"/>
+   <property name="bin" location="target/classes"/>
+   <property name="bin.test" location="target/test-classes"/>
+   <property name="src.tests" location="src/test/java"/>
+   <property name="src.tests.resources" location="src/test/resources"/>
+   <property name="dist" location="dist"/>
+   <property name="lib" location="lib"/>
+   <property name="doc" location="docs"/>
+   <property name="test" location="${src}/net/sf/jcablib/test"/>
+   <property name="jarfile" location="${dist}/${ant.project.name}-${jcablib.version}.jar"/>
+   <property name="jar.sources.file" location="${dist}/${ant.project.name}-src-${jcablib.version}.jar"/>
+   <property name="compile.debug" value="true"/>
+   <property name="mvn.ant.task.version" value="2.1.3"/>
+
+
+   <target name="install-mvn-ant-task">
+      <mkdir dir="${lib}"/>
+      <!-- download Ivy from web site so that it can be used even without any
+         special installation -->
+      <echo message="installing maven ant task..."/>
+      <get
+            src="http://central.maven.org/maven2/org/apache/maven/maven-ant-tasks/${mvn.ant.task.version}/maven-ant-tasks-${mvn.ant.task.version}.jar"
+            dest="${lib}" usetimestamp="true"/>
+   </target>
+
+   <target name="mvn-init" depends="install-mvn-ant-task" unless="compile.classpath"
+           xmlns:artifact="urn:maven-artifact-ant">
+      <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant"
+               classpath="${lib}/maven-ant-tasks-${mvn.ant.task.version}.jar"/>
+      <condition property="maven.repo.local" value="${maven.repo.local}" else="${user.home}/.m2/repository">
+         <isset property="maven.repo.local"/>
+      </condition>
+      <echo>maven.repo.local=${maven.repo.local}</echo>
+      <artifact:localRepository id="local.repository" path="${maven.repo.local}"/>
+      <artifact:pom file="pom.xml" id="maven.project"/>
+      <artifact:dependencies pathId="compile.classpath" filesetId="compile.fileset" useScope="compile">
+         <pom refid="maven.project"/>
+         <localRepository refid="local.repository"/>
+      </artifact:dependencies>
+      <artifact:dependencies pathId="test.classpath" filesetId="test.fileset" useScope="test">
+         <pom refid="maven.project"/>
+         <localRepository refid="local.repository"/>
+      </artifact:dependencies>
+      <artifact:dependencies pathId="runtime.classpath" filesetId="runtime.fileset" useScope="runtime">
+         <pom refid="maven.project"/>
+         <localRepository refid="local.repository"/>
+      </artifact:dependencies>
+   </target>
+
+   <!-- Stub install target. Install should depend on the 'jar' target, and
+      copy the built objects to the 'dist' directory. -->
+   <target name="install" description="Install jar" depends="jar">
+   </target>
+
+   <target name="compile" description="Compile code" depends="mvn-init">
+      <mkdir dir="${bin}"/>
+      <javac srcdir="${src}" destdir="${bin}" source="1.8" target="1.8"
+             includeAntRuntime="no" deprecation="on" classpathref="compile.classpath"
+             debug="${compile.debug}">
+         <compilerarg value="-Xlint"/>
+      </javac>
+      <copy todir="${bin}">
+         <fileset dir="${src.resources}"/>
+      </copy>
+   </target>
+
+   <target name="jar" depends="compile" description="Build jars">
+      <mkdir dir="${dist}"/>
+      <jar jarfile="${jarfile}">
+         <fileset dir="${bin}">
+            <include name="net/sf/jcablib/**"/>
+            <exclude name="net/sf/jcablib/test/**"/>
+         </fileset>
+         <fileset dir=".">
+            <include name="*.txt"/>
+            <include name="*.md"/>
+         </fileset>
+      </jar>
+      <jar jarfile="${jar.sources.file}">
+         <fileset dir="${src}">
+            <include name="net/sf/jcablib/**"/>
+         </fileset>
+         <fileset dir=".">
+            <include name="*.txt"/>
+            <include name="*.md"/>
+         </fileset>
+      </jar>
+   </target>
+
+   <target name="clean" description="Remove build and dist directories">
+      <delete dir="${bin}"/>
+      <delete dir="${bin.test}"/>
+      <delete dir="${dist}"/>
+      <delete dir="${doc}"/>
+      <delete dir="${lib}">
+         <!-- so we dont have multiple versions of the ant task lingering when upgrading the version -->
+         <exclude name="maven-ant-tasks-${mvn.ant.task.version}.jar"/>
+      </delete>
+   </target>
+
+   <target name="doc" description="">
+      <mkdir dir="${doc}"/>
+      <javadoc packagenames="net.sf.jcablib.*" sourcepath="${src}"
+               excludepackagenames="net.sf.jcablib.examples.*" defaultexcludes="yes"
+               destdir="docs/api" author="true" version="true" use="true"
+               windowtitle="Java Cabinet Library">
+         <tag name="todo" scope="all" description="To do:"/>
+      </javadoc>
+   </target>
+
+   <target name="run" depends="jar" description="Run command line tests">
+
+   </target>
+
+   <target name="compile-tests" description="Compile code" depends="compile">
+      <mkdir dir="${bin.test}"/>
+      <javac srcdir="${src.tests}" destdir="${bin.test}" source="1.8" target="1.8"
+             includeAntRuntime="no" deprecation="on"
+             debug="${compile.debug}">
+         <classpath>
+            <pathelement location="${bin.test}"/>
+            <pathelement location="${bin}"/>
+            <path refid="test.classpath"/>
+         </classpath>
+         <compilerarg value="-Xlint"/>
+      </javac>
+      <copy todir="${bin.test}">
+         <fileset dir="${src.tests.resources}"/>
+      </copy>
+   </target>
+
+   <target name="test" depends="compile-tests" description="Run JUnit tests">
+      <junit showoutput="true">
+         <formatter type="plain"/>
+         <classpath>
+            <pathelement location="${bin.test}"/>
+            <pathelement location="${bin}"/>
+            <path refid="test.classpath"/>
+         </classpath>
+         <test name="net.sf.jcablib.CabExtractionTest"/>
+      </junit>
+   </target>
+
+
+</project>
