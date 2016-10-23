@@ -65,6 +65,7 @@
              debug="${compile.debug}">
          <compilerarg value="-Xlint"/>
       </javac>
+      <mkdir dir="${src.resources}"/>
       <copy todir="${bin}">
          <fileset dir="${src.resources}"/>
       </copy>
