@@ -23,5 +23,14 @@ public class CabExtractionTest {
       assertEquals("Expecting 9 extracted files", 9, targetDir.listFiles().length);
    }
 
+   @Test
+   public void testMzipCompressedCab() throws IOException {
+      URL url = Thread.currentThread().getContextClassLoader().getResource("mzipped.cab");
+      File cabFile = new File(url.getFile());
+      File targetDir = Files.createTempDirectory("mzipped").toFile();
+      CabExtractor.extract(cabFile, targetDir);
+      assertEquals("Expecting 9 extracted files", 9, targetDir.listFiles().length);
+   }
+
 
 }

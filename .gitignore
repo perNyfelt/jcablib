@@ -15,3 +15,5 @@ dist/
 
 /project-model.iml
 /src/jcablib.iml
+/signing.properties
+/signDist.sh

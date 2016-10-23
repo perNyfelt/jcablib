@@ -6,7 +6,26 @@ Forked at 2016-Oct-22 (SF svn commit version r9).
 - I've upgraded it to Java 8 and fixed a lot of use of deprected methods.
 - Added dependency management (maven) but kept the original ant based build.
 - Applied some patches that were submitted but not accepted into the SF project.
+- Added a class with high level API usage for easier consumption
+- Added some Junit tests
 
+# Known issues
+Right now only uncompressed CAB files works - Mzip compressed cabs have some issue
+ as seen in the following test result:
+ ```
+ Testcase: testMzipCompressedCab took 0.176 sec
+ 	Caused an ERROR
+ invalid distance too far back
+ net.sf.jcablib.CabException: invalid distance too far back
+ 	at net.sf.jcablib.MSZipInputStream.read(MSZipInputStream.java:91)
+ 	at net.sf.jcablib.CabFileInputStream.read(CabFileInputStream.java:147)
+ 	at java.io.InputStream.read(InputStream.java:101)
+ 	at java.nio.file.Files.copy(Files.java:2908)
+ 	at java.nio.file.Files.copy(Files.java:3027)
+ 	at net.sf.jcablib.CabExtractor.extract(CabExtractor.java:59)
+ 	at net.sf.jcablib.CabExtractor.extract(CabExtractor.java:42)
+ 	at net.sf.jcablib.CabExtractionTest.testMzipCompressedCab(CabExtractionTest.java:31)
+```
 ## The following is the original README.txt:
 
 ********************************* jcablib 0.1 **********************************

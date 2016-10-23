@@ -28,22 +28,36 @@ import java.nio.file.Files;
 
 /**
  * Simple high level API usage.
+ *
+ * @author Per Nyfelt <a href="mailto:per.nyfelt@alipsa.se">per.nyfelt@alipsa.se</a>
  */
 public class CabExtractor {
 
+   /**
+    * Extract a cab file to the directory specified
+    * @param cabFile the cab file to extract
+    * @param dir the dir to extract the cab file to
+    * @throws IOException if something goes wrong
+    */
    public static void extract(File cabFile, File dir) throws IOException {
       CabFile cf = new CabFile(cabFile);
       extract(cf, dir);
    }
 
+   /**
+    * Extract a cab file to the directory specified
+    * @param cabFile the cab file to extract
+    * @param dir the dir to extract the cab file to
+    * @throws IOException if something goes wrong
+    */
    public static void extract(CabFile cabFile, File dir) throws IOException {
       CabEntry[] entries;
       entries = cabFile.getEntries();
       File outFile;
       if (!dir.exists()) dir.mkdir();
-      for (int i = 0; i < entries.length; i++) {
-         outFile = new File(dir, entries[i].getName());
-         InputStream in = cabFile.getInputStream(entries[i]);
+      for (CabEntry entry : entries) {
+         outFile = new File(dir, entry.getName());
+         InputStream in = cabFile.getInputStream(entry);
          Files.copy(in, outFile.toPath());
       }
    }
