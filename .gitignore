@@ -17,3 +17,5 @@ dist/
 /src/jcablib.iml
 /signing.properties
 /signDist.sh
+/.idea/libraries/
+/TEST-net.sf.jcablib.CabExtractionTest.txt
