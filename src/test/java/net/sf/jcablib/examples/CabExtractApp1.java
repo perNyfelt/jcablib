@@ -30,15 +30,20 @@ public class CabExtractApp1 {
          try {
             ca = new CabFile(new File(fd.getDirectory(), fd.getFile()));
             entries = ca.getEntries();
-            out_dir = new File(fd.getDirectory(), fd.getFile() + " folder");
-
+            out_dir = new File(fd.getDirectory(), fd.getFile() + "-folder");
+            out_dir.mkdir();
+            
             for (int i = 0; i < entries.length; i++) {
 //						if(entries[i].canExtract()) {
-               if (!out_dir.exists())      //shouldn't be in the loop, but...
-                  out_dir.mkdir();
 
                System.out.println("Extracting " + entries[i].getName());
                out_file = new File(out_dir, entries[i].getName());
+               File outdir = new File(out_file.getParent());
+               if (!outdir.exists()) {     //shouldn't be in the loop, but...
+                 System.out.println("Creating dir " + out_file.getParent());
+                 outdir.mkdirs();
+               }
+                 
                out = new FileOutputStream(out_file);
                in = ca.getInputStream(entries[i]);
                while ((bytes_read = in.read(buffer)) != -1)
