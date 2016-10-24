@@ -19,3 +19,6 @@ dist/
 /signDist.sh
 /.idea/libraries/
 /TEST-net.sf.jcablib.CabExtractionTest.txt
+/target/
+/.classpath
+/.project
