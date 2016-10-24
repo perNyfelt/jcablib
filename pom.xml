@@ -3,7 +3,7 @@
    <modelVersion>4.0.0</modelVersion>
 
    <groupId>net.sf.jcablib</groupId>
-   <artifactId>project-model</artifactId>
+   <artifactId>jcablib</artifactId>
    <version>0.1.1</version>
    <name>jcablib</name>
    <description>jcablib is a Java(tm) library for extracting microsoft cabinet files.</description>
